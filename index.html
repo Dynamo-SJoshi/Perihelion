@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Perihelion: a monthly letter from the sky</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--void:#060818;--ink:#e8ebff;--dim:#9aa3c7;--sun:#ffb23e;--line:rgba(190,200,255,.18);--panel:#0c1030;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--void);color:var(--ink);font:400 16px/1.6 "Hanken Grotesk",system-ui,sans-serif;overflow-x:hidden}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0}
+main{position:relative;z-index:1}
+.serif{font-family:"Instrument Serif",Georgia,serif;font-weight:400}
+.pin{position:sticky;top:0;height:100vh;display:grid;place-content:center;text-align:center;overflow:hidden;padding:0 20px}
+#intro{height:260vh}
+#ttl{font-size:clamp(56px,14vw,210px);line-height:1;margin:0;letter-spacing:.28em;margin-right:-.28em;will-change:transform}
+#sub{color:var(--dim);margin:18px 0 0;font-size:18px}
+#cue{color:var(--sun);margin:40px 0 0;font-size:14px}
+.lede{max-width:560px;margin:0 auto;padding:18vh 24px 4vh}
+.lede h2{font-size:clamp(34px,5vw,52px);line-height:1.1;margin:0 0 14px}
+.lede p{color:var(--dim);margin:0}
+#stage{position:relative;max-width:1200px;margin:0 auto;height:2500px}
+#trace{position:absolute;inset:0;pointer-events:none}
+.card{position:absolute;width:140px;background:rgba(12, 16, 48, 0.6);backdrop-filter:blur(4px);border:1px dashed rgba(154, 163, 199, 0.4);border-radius:6px;padding:12px 12px 10px;transition:border-color .2s,transform .2s,background .2s}
+.card:hover,.card:focus-within{border-color:var(--sun);transform:translateY(-3px)}
+.card h3{font-size:25px;line-height:1;margin:0 0 6px;color:var(--dim)}
+.card p.quote{font-size:12px;line-height:1.45;margin:0;color:rgba(154, 163, 199, 0.7);font-style:italic}
+a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
+#stage.flow{height:auto;padding:0 20px}
+.flow #trace{display:none}
+.flow .card{position:relative;width:210px;margin-bottom:26px}
+#outro{height:320vh}
+.pin2{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;max-width:1100px;margin:0 auto;padding:24px}
+#fig{width:100%;height:78vh;justify-self:center}
+.copy{max-width:460px}
+.copy h2{font-size:clamp(30px,4vw,46px);line-height:1.12;margin:0 0 16px}
+.copy p{color:var(--dim);margin:0 0 22px}
+
+/* Released Card */
+.card.released { border: 1px solid var(--sun); background: rgba(12, 16, 48, 0.9); }
+.card.released h3 { color: var(--ink); }
+.card.released p.quote { color: var(--dim); }
+.read-btn {
+  margin-top: 14px; background: transparent; border: 1px solid var(--sun); color: var(--sun);
+  padding: 6px 14px; border-radius: 20px; font-size: 11px; text-transform: uppercase;
+  cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: 1px; width: 100%;
+}
+.read-btn:hover { background: var(--sun); color: var(--void); }
+
+/* Newsletter Reader Overlay */
+#reader-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(6, 8, 24, 0.85); backdrop-filter: blur(10px);
+  z-index: 10000; display: flex; flex-direction: column; align-items: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.4s;
+  overflow-y: auto; padding: 60px 20px;
+}
+#reader-overlay.visible { opacity: 1; pointer-events: auto; }
+#close-reader {
+  position: absolute; top: 30px; right: 40px;
+  background: transparent; border: 1px solid var(--sun); color: var(--sun);
+  padding: 8px 16px; border-radius: 20px; cursor: pointer;
+  font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
+}
+#close-reader:hover { background: var(--sun); color: var(--void); }
+#reader-content { max-width: 650px; width: 100%; margin-top: 40px; color: var(--ink); }
+#reader-content p { font-size: 18px; line-height: 1.7; color: var(--dim); margin-bottom: 24px; }
+
+.social-links { display: flex; gap: 20px; margin-top: 32px; }
+
+.social-btn {
+  position: relative;
+  padding: 10px 24px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 25px;
+  overflow: hidden;
+  transition: color 0.3s 0.1s ease-out, border-color 0.3s, transform 0.2s;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  z-index: 1;
+}
+
+.social-btn:hover { transform: translateY(-2px); }
+.social-btn span { margin-left: 10px; }
+.social-btn svg { width: 16px; height: 16px; z-index: 1; }
+
+.social-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 150%; aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  z-index: -1;
+  background: var(--bg-hover);
+}
+
+.social-btn:hover { color: var(--ink); border-color: transparent; }
+.social-btn:hover::before { transform: translate(-50%, -50%) scale(1); }
+
+/* Instagram spacey style */
+.btn-insta {
+  border: 1px solid #d6249f;
+  color: #fd5949;
+  --bg-hover: linear-gradient(45deg, #405de6, #5851db, #833ab4, #c13584, #e1306c, #fd1d1d);
+}
+
+/* LinkedIn spacey style */
+.btn-linkedin {
+  border: 1px solid #0a66c2;
+  color: #00c6ff;
+  --bg-hover: linear-gradient(45deg, #001f3f, #0a66c2, #00c6ff);
+}
+@media (max-width:760px){.pin2{grid-template-columns:1fr;grid-template-rows:42vh auto;align-content:center;gap:8px}#fig{height:40vh}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+
+/* Target Cursor */
+body { cursor: crosshair; }
+.card, .card * { cursor: none; }
+#target-cursor {
+  position: fixed; pointer-events: none; z-index: 9999;
+  top: 0; left: 0; width: 24px; height: 24px;
+  will-change: transform, width, height;
+}
+.tc-corner {
+  position: absolute; width: 10px; height: 10px;
+  color: var(--sun); opacity: 0.8; 
+  transition: color 0.2s, transform 0.2s, opacity 0.2s;
+  display: flex; justify-content: center; align-items: center;
+}
+.tc-tl { top: -6px; left: -6px; }
+.tc-tr { top: -6px; right: -6px; }
+.tc-bl { bottom: -6px; left: -6px; }
+.tc-br { bottom: -6px; right: -6px; }
+#target-cursor.locked .tc-corner { color: var(--ink); opacity: 1; transform: scale(1.4); }
+</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<main>
+<section id="intro"><div class="pin">
+<h1 id="ttl" class="serif">Perihelion</h1>
+<p id="sub">A monthly letter from the sky. One edition released every month.</p>
+<p id="cue">Scroll to begin</p>
+</div></section>
+
+<div class="lede"><h2 class="serif">Twelve editions, one for each month.</h2>
+<p>Wander the archive and open whichever letter catches your eye.</p></div>
+
+<section id="stage" aria-label="Newsletter archive"><svg id="trace" aria-hidden="true"></svg></section>
+
+<section id="outro"><div class="pin2">
+<svg id="fig" viewBox="0 0 400 800" aria-hidden="true"></svg>
+<div class="copy">
+<h2 class="serif" id="o1">Every card traces the Sun's journey through the sky over the course of the year.</h2>
+<p id="o2">Photograph the Sun at the same clock time all year and it draws a lopsided figure eight, the analemma. Earth's tilted axis swings it north and south; its elliptical orbit speeds and slows the Sun's apparent drift, stretching it east and west.</p>
+<div class="social-links" id="o3">
+  <a href="https://www.instagram.com/astra.iiitsurat" target="_blank" class="social-btn btn-insta">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/></svg>
+    <span>Instagram</span>
+  </a>
+  <a href="https://www.linkedin.com/company/astra-astronomy-and-astrophysics-club-iiits/" target="_blank" class="social-btn btn-linkedin">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg>
+    <span>LinkedIn</span>
+  </a>
+</div>
+</div></div></section>
+<div id="reader-overlay">
+  <button id="close-reader" onclick="closeEdition()">Back to Archive</button>
+  <div id="reader-content"></div>
+</div>
+</main>
+
+<script>
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+const $=id=>document.getElementById(id);
+const M=[
+["January", "At perihelion, we draw closest to our star, while the Northern Hemisphere sleeps in winter’s cold.", true],
+["February", "The winter circle climbs high, framing the brightest stars across the crystalline night."],
+["March", "The sun crosses the celestial equator, balancing the scales of day and night."],
+["April", "From ancient dust near Lyra, a gentle spring shower spills its light."],
+["May", "The Earth plows through the dusty, ancient wake of Halley's Comet."],
+["June", "The sun stalls its northern march, granting us the longest day."],
+["July", "At aphelion, we reach our greatest distance, a silent cosmic breath."],
+["August", "Comet Swift-Tuttle’s ancient dust leaves a brilliant, fiery trail across the warm summer night."],
+["September", "The light retreats, and day and night meet nearly as equals once more."],
+["October", "Halley’s ancient dust strikes again, its meteors streaming from the skies of Orion."],
+["November", "The lion awakens, its starry realm sending meteors across the November sky."],
+["December", "Asteroid Phaethon paints the December night with bright, graceful streaks."]
+];
+const eot=d=>{const B=2*Math.PI*(d-81)/365;return 9.87*Math.sin(2*B)-7.53*Math.cos(B)-1.5*Math.sin(B)};
+const dec=d=>23.45*Math.sin(2*Math.PI*(d-81)/365);
+// Placeholder Days of Year (spaced mid-month). Update these 12 numbers (1-365) when actual publish dates are known.
+const doy=[15,45,74,105,135,166,196,227,258,288,319,349];
+
+/* cards */
+const stage=$('stage'),trace=$('trace'),cards=[];
+M.forEach((m,i)=>{
+  const isReleased = m[2] === true;
+  const c=document.createElement('article');
+  c.className='card' + (isReleased ? ' released' : '');
+  if (isReleased) {
+    c.innerHTML=`<h3 class="serif">${m[0]}</h3><p class="quote">"${m[1]}"</p><button class="read-btn" onclick="openEdition(${i})">Read Edition</button>`;
+  } else {
+    c.innerHTML=`<h3 class="serif">${m[0]}</h3><p class="quote">"${m[1]}"</p>`;
+  }
+  stage.appendChild(c);cards.push(c);
+});
+
+function openEdition(index) {
+  const data = M[index];
+  $('reader-content').innerHTML = `
+    <h1 class="serif" style="font-size: 48px; color: var(--sun); margin-bottom: 24px;">${data[0]} Edition</h1>
+    <p style="font-size: 20px; font-style: italic; color: var(--ink); margin-bottom: 40px;">"${data[1]}"</p>
+    <p>Welcome to the ${data[0]} newsletter of ASTRA.</p>
+    <p>This is a mockup of the cinematic reading experience. Notice how the frosted glass overlay allows the starry background to still be visible and drifting behind the text.</p>
+    <p>Your actual articles, photos of club events, and upcoming skywatching schedules will go here. The typography is kept minimal and highly legible to contrast with the dark void.</p>
+  `;
+  $('reader-overlay').classList.add('visible');
+  document.body.style.overflow = 'hidden';
+}
+function closeEdition() {
+  $('reader-overlay').classList.remove('visible');
+  document.body.style.overflow = '';
+}
+
+/* layout: card anchors follow the analemma */
+const H=2500,P=120;
+function layout(){
+const W=stage.clientWidth,wide=innerWidth>=1040;
+stage.classList.toggle('flow',!wide);
+if(!wide){cards.forEach((c,i)=>{c.style.left=c.style.top='';c.style.marginLeft=((eot(doy[i])+14)/31*Math.max(0,W-250))+'px'});trace.innerHTML='';return}
+const kx=(W-170)/32,X=d=>W/2+(eot(d)-1.4)*kx,Y=d=>P+(23.5-dec(d))/47*(H-2*P);
+let p='';for(let d=1;d<=365;d++)p+=(d==1?'M':'L')+X(d).toFixed(1)+' '+Y(d).toFixed(1);
+let g='';
+cards.forEach((c,i)=>{const x=X(doy[i]),y=Y(doy[i]);c.style.marginLeft='';c.style.left=(x-70)+'px';c.style.top=(y+14)+'px';
+g+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+14}" stroke="#ffb23e" stroke-opacity=".6"/><circle cx="${x}" cy="${y}" r="4" fill="#ffb23e"/>`});
+trace.setAttribute('viewBox',`0 0 ${W} ${H}`);
+trace.innerHTML=`<path d="${p}Z" fill="none" stroke="#9aa3c7" stroke-opacity=".14" stroke-dasharray="2 7"/>`+g;
+}
+addEventListener('resize',layout);layout();
+
+/* outro figure */
+const fig=$('fig'),FX=d=>200+(eot(d)-1.4)*10,FY=d=>400-dec(d)*15;
+let fp='';for(let d=1;d<=365;d++)fp+=(d==1?'M':'L')+FX(d).toFixed(1)+' '+FY(d).toFixed(1);
+let fd='';doy.forEach((d,i)=>{fd+=`<g class="m" data-t="${(d-1)/364}"><circle cx="${FX(d)}" cy="${FY(d)}" r="4" fill="#ffb23e"/><text x="${FX(d)+(eot(d)>1.4?10:-10)}" y="${FY(d)+4}" text-anchor="${eot(d)>1.4?'start':'end'}" fill="#9aa3c7" font-size="13" font-family="Hanken Grotesk,sans-serif">${M[i][0].slice(0,3)}</text></g>`});
+fig.innerHTML=`<path id="fp" d="${fp}Z" fill="none" stroke="#ffb23e" stroke-width="1.5" pathLength="365" stroke-dasharray="365" stroke-dashoffset="365"/>${fd}<circle id="sun" r="11" fill="#ffb23e"/>`;
+const fpEl=$('fp'),sun=$('sun'),ms=[...fig.querySelectorAll('.m')];
+
+/* scroll scenes */
+const intro=$('intro'),outro=$('outro'),ttl=$('ttl');
+const prog=el=>{const r=el.getBoundingClientRect();return clamp(-r.top/(r.height-innerHeight))};
+function scenes(){
+const p=RM?0:prog(intro);
+ttl.style.letterSpacing=(.28*(1-clamp(p*3)))+'em';ttl.style.marginRight=(-.28*(1-clamp(p*3)))+'em';
+ttl.style.transform=`scale(${1+p*p*9})`;ttl.style.opacity=1-clamp((p-.5)/.4);
+$('sub').style.opacity=$('cue').style.opacity=1-clamp(p*4);
+const q=RM?1:prog(outro),t=clamp(q/.6),d=1+364*t;
+fpEl.setAttribute('stroke-dashoffset',365*(1-t));
+sun.setAttribute('cx',FX(d));sun.setAttribute('cy',FY(d));
+ms.forEach(m=>m.style.opacity=t>=+m.dataset.t-.001?1:.15);
+$('o1').style.opacity=clamp((q-.15)/.2);$('o2').style.opacity=clamp((q-.3)/.2);$('o3').style.opacity=clamp((q-.45)/.2);
+}
+
+/* starfield, stretched by scroll speed */
+const cv=$('sky'),cx=cv.getContext('2d');let w,h,stars=[],vel=0,lastY=scrollY;
+function size(){w=cv.width=innerWidth;h=cv.height=innerHeight;stars=Array.from({length:Math.min(520,w*h/2800|0)},()=>({x:(Math.random()-.5)*w*2,y:(Math.random()-.5)*h*2,z:20+Math.random()*w}))}
+addEventListener('resize',size);size();
+function loop(){
+vel+=(clamp(scrollY-lastY,-70,70)-vel)*.12;lastY=scrollY;
+cx.clearRect(0,0,w,h);const k=w*.5;
+for(const s of stars){const pz=s.z;s.z-=RM?0:.5+vel*.9;
+if(s.z<20)s.z=w;else if(s.z>w)s.z=20;
+const f=1-s.z/w,x=w/2+s.x/s.z*k,y=h/2+s.y/s.z*k,px=w/2+s.x/pz*k,py=h/2+s.y/pz*k;
+cx.strokeStyle=`rgba(220,228,255,${.12+f*.85})`;cx.lineWidth=clamp(.5+f*1.8,.5,2.4);
+cx.beginPath();cx.moveTo(px,py);cx.lineTo(x+.01,y);cx.stroke()}
+scenes();
+if(!RM)requestAnimationFrame(loop)}
+loop();if(RM)addEventListener('scroll',scenes,{passive:true});
+
+/* Target Cursor logic */
+const tc = document.createElement('div');
+tc.id = 'target-cursor';
+const starSvg = '<svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C12 6.627 17.373 12 24 12C17.373 12 12 17.373 12 24C12 17.373 6.627 12 0 12C6.627 12 12 6.627 12 0Z"/></svg>';
+tc.innerHTML = `<div class="tc-corner tc-tl">${starSvg}</div><div class="tc-corner tc-tr">${starSvg}</div><div class="tc-corner tc-bl">${starSvg}</div><div class="tc-corner tc-br">${starSvg}</div>`;
+document.body.appendChild(tc);
+
+let mX = innerWidth/2, mY = innerHeight/2, tX = mX, tY = mY, cX = mX, cY = mY;
+let tW = 24, tH = 24, cW = 24, cH = 24;
+let curCard = null;
+
+addEventListener('mousemove', e => { mX = e.clientX; mY = e.clientY; });
+
+cards.forEach(c => {
+  c.addEventListener('mouseenter', () => { curCard = c; tc.classList.add('locked'); });
+  c.addEventListener('mouseleave', () => { curCard = null; tc.classList.remove('locked'); });
+});
+
+function cursorLoop() {
+  if (curCard) {
+    const r = curCard.getBoundingClientRect();
+    tX = r.left + r.width / 2;
+    tY = r.top + r.height / 2;
+    tW = r.width + 16;
+    tH = r.height + 16;
+  } else {
+    tX = mX; tY = mY; tW = 24; tH = 24;
+  }
+  // Smooth lerp interpolation
+  cX += (tX - cX) * 0.15; cY += (tY - cY) * 0.15;
+  cW += (tW - cW) * 0.15; cH += (tH - cH) * 0.15;
+  
+  tc.style.transform = `translate(${cX}px, ${cY}px) translate(-50%, -50%)`;
+  tc.style.width = `${cW}px`;
+  tc.style.height = `${cH}px`;
+  
+  requestAnimationFrame(cursorLoop);
+}
+cursorLoop();
+
+</script>
+</body>
+</html>
