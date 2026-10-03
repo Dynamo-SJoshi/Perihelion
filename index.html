@@ -236,12 +236,15 @@ const dec=d=>23.45*Math.sin(2*Math.PI*(d-81)/365);
 // Placeholder Days of Year (spaced mid-month). Update these 12 numbers (1-365) when actual publish dates are known.
 const doy=[15,45,74,105,135,166,196,227,258,288,319,349];
 
-/* live moon phase */
+/* live moon phase (Calibrated for India / IST) */
 function updateMoonPhase() {
-  const lp = 2551442.8; // cycle in seconds (29.53 days)
+  const lp = 2551442.8; // Lunar cycle in seconds (29.53 days)
   const now = new Date().getTime() / 1000;
-  const newMoon = 1704931200; // Jan 11 2024
-  const phase = ((now - newMoon) % lp) / lp;
+  
+  // Reference: Exact New Moon time on Jan 11, 2024 at 5:27 PM IST (Indian Standard Time)
+  const newMoonIST = 1704974220; 
+  
+  const phase = ((now - newMoonIST) % lp) / lp;
   let icon, text;
   if (phase < 0.03 || phase > 0.97) { icon = '🌑'; text = 'New Moon'; }
   else if (phase < 0.22) { icon = '🌒'; text = 'Waxing Crescent'; }
