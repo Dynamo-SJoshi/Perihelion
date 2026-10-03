@@ -48,6 +48,30 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 }
 .read-btn:hover { background: var(--sun); color: var(--void); }
 
+/* Logo */
+#site-logo {
+  position: fixed; top: 25px; left: 30px; z-index: 100;
+  width: 140px; display: block;
+  animation: float 6s ease-in-out infinite;
+}
+#site-logo img {
+  width: 100%; height: auto;
+  mix-blend-mode: screen; /* Magic! Removes the black background */
+  opacity: 0.9;
+  transition: opacity 0.3s, filter 0.3s, transform 0.3s;
+}
+#site-logo:hover img {
+  opacity: 1; transform: scale(1.05);
+  filter: drop-shadow(0 0 10px rgba(0, 198, 255, 0.4));
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@media (max-width: 760px) {
+  #site-logo { width: 100px; top: 20px; left: 20px; }
+}
+
 /* Newsletter Reader Overlay */
 #reader-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -148,6 +172,9 @@ body { cursor: crosshair; }
 <body>
 <canvas id="sky" aria-hidden="true"></canvas>
 <main>
+<a href="#" id="site-logo" aria-label="ASTRA Home">
+  <img src="logo.jpg" alt="ASTRA Logo">
+</a>
 <section id="intro"><div class="pin">
 <h1 id="ttl" class="serif">Perihelion</h1>
 <p id="sub">A monthly letter from the sky. One edition released every month.</p>
