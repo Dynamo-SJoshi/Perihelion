@@ -92,6 +92,26 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 
 .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; }
 
+#warp-btn {
+  position: fixed; bottom: 30px; right: 30px; z-index: 999;
+  background: rgba(12, 16, 48, 0.7); backdrop-filter: blur(4px);
+  border: 1px solid var(--sun); color: var(--sun);
+  padding: 12px 24px; border-radius: 30px; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 2px; cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1); font-family: inherit;
+  opacity: 0; pointer-events: none; transform: translateY(20px);
+}
+#warp-btn.visible {
+  opacity: 1; pointer-events: auto; transform: translateY(0);
+}
+#warp-btn:hover {
+  background: var(--sun); color: var(--void); transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(255, 178, 62, 0.4);
+}
+@media (max-width: 760px) {
+  #warp-btn { bottom: 20px; right: 20px; padding: 10px 16px; font-size: 10px; }
+}
+
 .social-btn {
   position: relative;
   padding: 10px 24px;
@@ -176,6 +196,7 @@ body { cursor: crosshair; }
 </svg>
 <canvas id="sky" aria-hidden="true"></canvas>
 <main>
+<button id="warp-btn" onclick="lightSpeedJump()">✦ Warp to Top</button>
 <div id="moon-phase" aria-label="Current Moon Phase">
   <span id="moon-icon"></span> <span id="moon-text"></span>
 </div>
@@ -328,54 +349,26 @@ fpEl.setAttribute('stroke-dashoffset',365*(1-t));
 sun.setAttribute('cx',FX(d));sun.setAttribute('cy',FY(d));
 ms.forEach(m=>m.style.opacity=t>=+m.dataset.t-.001?1:.15);
 $('o1').style.opacity=clamp((q-.15)/.2);$('o2').style.opacity=clamp((q-.3)/.2);$('o3').style.opacity=clamp((q-.45)/.2);
+
+if ($('warp-btn')) {
+  if (scrollY > innerHeight * 1.5 && !isWarping) $('warp-btn').classList.add('visible');
+  else $('warp-btn').classList.remove('visible');
+}
 }
 
 /* starfield, stretched by scroll speed */
-const cv=$('sky'),cx=cv.getContext('2d');let w,h,stars=[],vel=0,lastY=scrollY;
-let orion = {x:0, y:0, z:500, active:0};
-const oCoords = [{x:-20,y:-40},{x:20,y:-30},{x:-10,y:5},{x:0,y:0},{x:10,y:-5},{x:-30,y:40},{x:30,y:50}];
-const oLines = [[0,1],[0,2],[1,4],[2,3],[3,4],[2,5],[4,6],[5,6]];
-let showConstel = false, constelTimer;
-function resetOrion(){ orion.x=(Math.random()-.5)*w*0.8; orion.y=(Math.random()-.5)*h*0.8; orion.z=w*0.8; }
-function pokeConstel(){ showConstel = false; clearTimeout(constelTimer); constelTimer = setTimeout(()=>showConstel=true, 1500); }
-addEventListener('scroll', pokeConstel, {passive:true});
-addEventListener('touchstart', pokeConstel, {passive:true});
-pokeConstel();
-
-function size(){w=cv.width=innerWidth;h=cv.height=innerHeight;stars=Array.from({length:Math.min(520,w*h/2800|0)},()=>({x:(Math.random()-.5)*w*2,y:(Math.random()-.5)*h*2,z:20+Math.random()*w})); resetOrion();}
+const cv=$('sky'),cx=cv.getContext('2d');let w,h,stars=[],vel=0,lastY=scrollY,isWarping=false;
+function size(){w=cv.width=innerWidth;h=cv.height=innerHeight;stars=Array.from({length:Math.min(520,w*h/2800|0)},()=>({x:(Math.random()-.5)*w*2,y:(Math.random()-.5)*h*2,z:20+Math.random()*w}))}
 addEventListener('resize',size);size();
-
 function loop(){
-vel+=(clamp(scrollY-lastY,-70,70)-vel)*.12;lastY=scrollY;
+if(!isWarping) vel+=(clamp(scrollY-lastY,-70,70)-vel)*.12;
+lastY=scrollY;
 cx.clearRect(0,0,w,h);const k=w*.5;
-
 for(const s of stars){const pz=s.z;s.z-=RM?0:.5+vel*.9;
 if(s.z<20)s.z=w;else if(s.z>w)s.z=20;
 const f=1-s.z/w,x=w/2+s.x/s.z*k,y=h/2+s.y/s.z*k,px=w/2+s.x/pz*k,py=h/2+s.y/pz*k;
 cx.strokeStyle=`rgba(220,228,255,${.12+f*.85})`;cx.lineWidth=clamp(.5+f*1.8,.5,2.4);
 cx.beginPath();cx.moveTo(px,py);cx.lineTo(x+.01,y);cx.stroke()}
-
-orion.z-=RM?0:.5+vel*.9; if(orion.z<20) resetOrion(); else if(orion.z>w) orion.z=20;
-const of = 1-orion.z/w;
-const ocx = w/2 + orion.x/orion.z*k, ocy = h/2 + orion.y/orion.z*k;
-const dist = Math.sqrt((mX-ocx)**2 + (mY-ocy)**2);
-orion.active += ((dist<120 || showConstel) ? 0.03 : -0.05);
-orion.active = clamp(orion.active, 0, 1);
-
-let pts = [];
-for(let p of oCoords){
-  const px = w/2 + (orion.x + p.x*3.5)/orion.z*k, py = h/2 + (orion.y + p.y*3.5)/orion.z*k;
-  pts.push({x:px, y:py});
-  cx.fillStyle = `rgba(220,228,255,${.4+of*.6})`; cx.beginPath(); cx.arc(px, py, clamp(1.5+of*1.5, .5, 3), 0, Math.PI*2); cx.fill();
-}
-if(orion.active > 0.01){
-  cx.strokeStyle = `rgba(255,255,255,${orion.active*of*0.8})`; cx.lineWidth=1.5; cx.beginPath();
-  for(let l of oLines){ cx.moveTo(pts[l[0]].x, pts[l[0]].y); cx.lineTo(pts[l[1]].x, pts[l[1]].y); }
-  cx.stroke();
-  cx.fillStyle = `rgba(154,163,199,${orion.active*of})`; cx.font = "11px 'Hanken Grotesk', sans-serif"; cx.letterSpacing = "2px";
-  cx.fillText("ORION", pts[6].x+10, pts[6].y+10);
-}
-
 scenes();
 if(!RM)requestAnimationFrame(loop)}
 loop();if(RM)addEventListener('scroll',scenes,{passive:true});
@@ -419,6 +412,31 @@ function cursorLoop() {
   requestAnimationFrame(cursorLoop);
 }
 cursorLoop();
+
+/* Light Speed Jump */
+function lightSpeedJump() {
+  if (isWarping || RM) {
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    return;
+  }
+  isWarping = true;
+  const startY = scrollY;
+  const startTime = performance.now();
+  const duration = 2500;
+  
+  function step(time) {
+    const elapsed = time - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    
+    window.scrollTo(0, startY * (1 - ease));
+    vel = Math.sin(progress * Math.PI) * 350; // Huge warp velocity
+    
+    if (progress < 1) requestAnimationFrame(step);
+    else isWarping = false;
+  }
+  requestAnimationFrame(step);
+}
 
 </script>
 </body>
