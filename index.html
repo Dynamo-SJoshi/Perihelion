@@ -30,9 +30,6 @@ main{position:relative;z-index:1}
 .card h3{font-size:25px;line-height:1;margin:0 0 6px;color:var(--dim)}
 .card p.quote{font-size:12px;line-height:1.45;margin:0;color:rgba(154, 163, 199, 0.7);font-style:italic}
 a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(--sun);outline-offset:3px}
-#stage.flow{height:auto;padding:0 20px}
-.flow #trace{display:none}
-.flow .card{position:relative;width:210px;margin-bottom:26px}
 #outro{height:320vh}
 .pin2{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:24px;max-width:1100px;margin:0 auto;padding:24px}
 #fig{width:100%;height:78vh;justify-self:center}
@@ -61,16 +58,16 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 }
 #reader-overlay.visible { opacity: 1; pointer-events: auto; }
 #close-reader {
-  position: absolute; top: 30px; right: 40px;
-  background: transparent; border: 1px solid var(--sun); color: var(--sun);
+  position: fixed; top: 20px; right: 20px; z-index: 10001;
+  background: rgba(6, 8, 24, 0.9); border: 1px solid var(--sun); color: var(--sun);
   padding: 8px 16px; border-radius: 20px; cursor: pointer;
   font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;
 }
 #close-reader:hover { background: var(--sun); color: var(--void); }
 #reader-content { max-width: 650px; width: 100%; margin-top: 40px; color: var(--ink); }
-#reader-content p { font-size: 18px; line-height: 1.7; color: var(--dim); margin-bottom: 24px; }
+#reader-content p { font-size: clamp(16px, 4vw, 18px); line-height: 1.7; color: var(--dim); margin-bottom: 24px; }
 
-.social-links { display: flex; gap: 20px; margin-top: 32px; }
+.social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; }
 
 .social-btn {
   position: relative;
@@ -126,6 +123,10 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 /* Target Cursor */
 body { cursor: crosshair; }
 .card, .card * { cursor: none; }
+@media (hover: none) and (pointer: coarse) {
+  #target-cursor { display: none !important; }
+  body, .card, .card * { cursor: auto !important; }
+}
 #target-cursor {
   position: fixed; pointer-events: none; z-index: 9999;
   top: 0; left: 0; width: 24px; height: 24px;
@@ -220,8 +221,8 @@ M.forEach((m,i)=>{
 function openEdition(index) {
   const data = M[index];
   $('reader-content').innerHTML = `
-    <h1 class="serif" style="font-size: 48px; color: var(--sun); margin-bottom: 24px;">${data[0]} Edition</h1>
-    <p style="font-size: 20px; font-style: italic; color: var(--ink); margin-bottom: 40px;">"${data[1]}"</p>
+    <h1 class="serif" style="font-size: clamp(32px, 8vw, 48px); color: var(--sun); margin-bottom: 24px;">${data[0]} Edition</h1>
+    <p style="font-size: clamp(16px, 5vw, 20px); font-style: italic; color: var(--ink); margin-bottom: 40px;">"${data[1]}"</p>
     <p>Welcome to the ${data[0]} newsletter of ASTRA.</p>
     <p>This is a mockup of the cinematic reading experience. Notice how the frosted glass overlay allows the starry background to still be visible and drifting behind the text.</p>
     <p>Your actual articles, photos of club events, and upcoming skywatching schedules will go here. The typography is kept minimal and highly legible to contrast with the dark void.</p>
@@ -237,10 +238,10 @@ function closeEdition() {
 /* layout: card anchors follow the analemma */
 const H=2500,P=120;
 function layout(){
-const W=stage.clientWidth,wide=innerWidth>=1040;
-stage.classList.toggle('flow',!wide);
-if(!wide){cards.forEach((c,i)=>{c.style.left=c.style.top='';c.style.marginLeft=((eot(doy[i])+14)/31*Math.max(0,W-250))+'px'});trace.innerHTML='';return}
-const kx=(W-170)/32,X=d=>W/2+(eot(d)-1.4)*kx,Y=d=>P+(23.5-dec(d))/47*(H-2*P);
+const W=stage.clientWidth;
+const padding = W < 600 ? 150 : 170;
+const kx=Math.max(2, (W-padding)/32);
+const X=d=>W/2+(eot(d)-1.4)*kx,Y=d=>P+(23.5-dec(d))/47*(H-2*P);
 let p='';for(let d=1;d<=365;d++)p+=(d==1?'M':'L')+X(d).toFixed(1)+' '+Y(d).toFixed(1);
 let g='';
 cards.forEach((c,i)=>{const x=X(doy[i]),y=Y(doy[i]);c.style.marginLeft='';c.style.left=(x-70)+'px';c.style.top=(y+14)+'px';
@@ -263,7 +264,8 @@ const prog=el=>{const r=el.getBoundingClientRect();return clamp(-r.top/(r.height
 function scenes(){
 const p=RM?0:prog(intro);
 ttl.style.letterSpacing=(.28*(1-clamp(p*3)))+'em';ttl.style.marginRight=(-.28*(1-clamp(p*3)))+'em';
-ttl.style.transform=`scale(${1+p*p*9})`;ttl.style.opacity=1-clamp((p-.5)/.4);
+const maxZoom = innerWidth < 760 ? 3.5 : 9;
+ttl.style.transform=`scale(${1+p*p*maxZoom})`;ttl.style.opacity=1-clamp((p-.5)/.4);
 $('sub').style.opacity=$('cue').style.opacity=1-clamp(p*4);
 const q=RM?1:prog(outro),t=clamp(q/.6),d=1+364*t;
 fpEl.setAttribute('stroke-dashoffset',365*(1-t));
