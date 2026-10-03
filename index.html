@@ -50,11 +50,11 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 
 /* Logo */
 #intro-logo {
-  width: 120px; margin: 0 auto 20px;
-  mix-blend-mode: screen; opacity: 0.9;
+  width: 280px; margin: 0 auto 20px;
+  filter: url(#remove-black); opacity: 0.95;
 }
 @media (max-width: 760px) {
-  #intro-logo { width: 90px; }
+  #intro-logo { width: 180px; }
 }
 
 /* Newsletter Reader Overlay */
@@ -155,6 +155,11 @@ body { cursor: crosshair; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute; width:0; height:0; pointer-events:none;">
+  <filter id="remove-black">
+    <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  1 1 1 0 0" />
+  </filter>
+</svg>
 <canvas id="sky" aria-hidden="true"></canvas>
 <main>
 <section id="intro"><div class="pin">
