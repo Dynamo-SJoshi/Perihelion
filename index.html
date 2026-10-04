@@ -44,9 +44,9 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 .read-btn {
   margin-top: 14px; background: transparent; border: 1px solid var(--sun); color: var(--sun);
   padding: 6px 14px; border-radius: 20px; font-size: 11px; text-transform: uppercase;
-  cursor: pointer; transition: background 0.2s, color 0.2s; letter-spacing: 1px; width: 100%;
+  transition: background 0.2s, color 0.2s; letter-spacing: 1px; width: 100%; text-align: center;
 }
-.read-btn:hover { background: var(--sun); color: var(--void); }
+.card.released:hover .read-btn { background: var(--sun); color: var(--void); }
 
 /* Logo */
 #intro-logo {
@@ -240,7 +240,7 @@ const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const $=id=>document.getElementById(id);
 const M=[
 ["January", "At perihelion, we draw closest to our star, while the Northern Hemisphere sleeps in winter’s cold.", true],
-["February", "The winter circle climbs high, framing the brightest stars across the crystalline night."],
+["February", "The winter circle climbs high, framing the brightest stars across the crystalline night.", true],
 ["March", "The sun crosses the celestial equator, balancing the scales of day and night."],
 ["April", "From ancient dust near Lyra, a gentle spring shower spills its light."],
 ["May", "The Earth plows through the dusty, ancient wake of Halley's Comet."],
@@ -287,7 +287,8 @@ M.forEach((m,i)=>{
   const c=document.createElement('article');
   c.className='card' + (isReleased ? ' released' : '');
   if (isReleased) {
-    c.innerHTML=`<h3 class="serif">${m[0]}</h3><p class="quote">"${m[1]}"</p><button class="read-btn" onclick="openEdition(${i})">Read Edition</button>`;
+    c.onclick = () => openEdition(i);
+    c.innerHTML=`<h3 class="serif">${m[0]}</h3><p class="quote">"${m[1]}"</p><div class="read-btn">Read Edition</div>`;
   } else {
     c.innerHTML=`<h3 class="serif">${m[0]}</h3><p class="quote">"${m[1]}"</p>`;
   }
@@ -318,12 +319,37 @@ const W=stage.clientWidth;
 const padding = W < 600 ? 150 : 170;
 const kx=Math.max(2, (W-padding)/32);
 const X=d=>W/2+(eot(d)-1.4)*kx,Y=d=>P+(23.5-dec(d))/47*(H-2*P);
-let p='';for(let d=1;d<=365;d++)p+=(d==1?'M':'L')+X(d).toFixed(1)+' '+Y(d).toFixed(1);
+
+let minDoy = 999, maxDoy = 0;
+M.forEach((m,i) => { 
+  if(m[2]) {
+    if(doy[i] < minDoy) minDoy = doy[i];
+    if(doy[i] > maxDoy) maxDoy = doy[i];
+  }
+});
+
+let pWhite1='', pViolet='', pWhite2='';
+for(let d=1;d<=365;d++){
+  const pt = X(d).toFixed(1)+' '+Y(d).toFixed(1);
+  if (d <= minDoy) pWhite1 += (d==1?'M':'L') + pt;
+  if (d >= minDoy && d <= maxDoy) pViolet += (d==minDoy?'M':'L') + pt;
+  if (d >= maxDoy) pWhite2 += (d==maxDoy?'M':'L') + pt;
+}
+
+if (minDoy === 999) pWhite1 += ' Z';
+else pWhite2 += ' L ' + X(1).toFixed(1) + ' ' + Y(1).toFixed(1);
+
 let g='';
 cards.forEach((c,i)=>{const x=X(doy[i]),y=Y(doy[i]);c.style.marginLeft='';c.style.left=(x-70)+'px';c.style.top=(y+14)+'px';
 g+=`<line x1="${x}" y1="${y}" x2="${x}" y2="${y+14}" stroke="#ffb23e" stroke-opacity=".6"/><circle cx="${x}" cy="${y}" r="4" fill="#ffb23e"/>`});
 trace.setAttribute('viewBox',`0 0 ${W} ${H}`);
-trace.innerHTML=`<path d="${p}Z" fill="none" stroke="#9aa3c7" stroke-opacity=".14" stroke-dasharray="2 7"/>`+g;
+
+let paths = '';
+if (pWhite1) paths += `<path d="${pWhite1}" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity=".5" stroke-dasharray="2 7"/>`;
+if (pViolet && minDoy !== maxDoy) paths += `<path d="${pViolet}" fill="none" stroke="#7c3aed" stroke-width="2" stroke-opacity="1" stroke-dasharray="2 7"/>`;
+if (pWhite2) paths += `<path d="${pWhite2}" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity=".5" stroke-dasharray="2 7"/>`;
+
+trace.innerHTML = paths + g;
 }
 addEventListener('resize',layout);layout();
 
