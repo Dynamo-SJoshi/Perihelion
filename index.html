@@ -38,7 +38,8 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 .copy p{color:var(--dim);margin:0 0 22px}
 
 /* Released Card */
-.card.released { border: 1px solid var(--sun); background: rgba(12, 16, 48, 0.9); }
+.card.released { border: 1px solid var(--sun); background: rgba(12, 16, 48, 0.9); cursor: pointer; }
+.card.released:hover { box-shadow: 0 0 16px rgba(255, 178, 62, 0.25); }
 .card.released h3 { color: var(--ink); }
 .card.released p.quote { color: var(--dim); }
 .read-btn {
@@ -201,7 +202,7 @@ body { cursor: crosshair; }
   <span id="moon-icon"></span> <span id="moon-text"></span>
 </div>
 <section id="intro"><div class="pin">
-<a href="https://jal291006.github.io/Astra-Website/" target="_blank" style="position: relative; z-index: 100;">
+<a href="https://astra-iiitsurat.github.io/Astra-Website/" target="_blank" style="position: relative; z-index: 100;">
   <img src="logo.jpg" alt="ASTRA Logo" id="intro-logo" style="cursor: pointer;">
 </a>
 <h1 id="ttl" class="serif">Perihelion</h1>
@@ -241,8 +242,8 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
 const $=id=>document.getElementById(id);
 const M=[
-["January", "At perihelion, we draw closest to our star, while the Northern Hemisphere sleeps in winter’s cold.", true],
-["February", "The winter circle climbs high, framing the brightest stars across the crystalline night.", true],
+["January", "At perihelion, we draw closest to our star, while the Northern Hemisphere sleeps in winter’s cold."],
+["February", "The winter circle climbs high, framing the brightest stars across the crystalline night."],
 ["March", "The sun crosses the celestial equator, balancing the scales of day and night."],
 ["April", "From ancient dust near Lyra, a gentle spring shower spills its light."],
 ["May", "The Earth plows through the dusty, ancient wake of Halley's Comet."],
@@ -331,15 +332,18 @@ M.forEach((m,i) => {
 });
 
 let pWhite1='', pViolet='', pWhite2='';
-for(let d=1;d<=365;d++){
-  const pt = X(d).toFixed(1)+' '+Y(d).toFixed(1);
-  if (d <= minDoy) pWhite1 += (d==1?'M':'L') + pt;
-  if (d >= minDoy && d <= maxDoy) pViolet += (d==minDoy?'M':'L') + pt;
-  if (d >= maxDoy) pWhite2 += (d==maxDoy?'M':'L') + pt;
+if (maxDoy === 0) {
+  for(let d=1;d<=365;d++) pWhite1 += (d==1?'M':'L') + X(d).toFixed(1)+' '+Y(d).toFixed(1);
+  pWhite1 += ' Z';
+} else {
+  for(let d=1;d<=365;d++){
+    const pt = X(d).toFixed(1)+' '+Y(d).toFixed(1);
+    if (d <= minDoy) pWhite1 += (d==1?'M':'L') + pt;
+    if (d >= minDoy && d <= maxDoy) pViolet += (d==minDoy?'M':'L') + pt;
+    if (d >= maxDoy) pWhite2 += (d==maxDoy?'M':'L') + pt;
+  }
+  pWhite2 += ' L ' + X(1).toFixed(1) + ' ' + Y(1).toFixed(1);
 }
-
-if (minDoy === 999) pWhite1 += ' Z';
-else pWhite2 += ' L ' + X(1).toFixed(1) + ' ' + Y(1).toFixed(1);
 
 let g='';
 cards.forEach((c,i)=>{const x=X(doy[i]),y=Y(doy[i]);c.style.marginLeft='';c.style.left=(x-70)+'px';c.style.top=(y+14)+'px';
