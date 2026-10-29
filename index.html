@@ -323,17 +323,6 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
   margin-bottom: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;
   color: var(--sun); font-weight: 600; flex-wrap: wrap;
 }
-.article-pdf-btn {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 5px 12px; border-radius: 16px;
-  background: rgba(255, 178, 62, 0.12); border: 1px solid var(--sun);
-  color: var(--sun); font-size: 11px; text-decoration: none;
-  letter-spacing: 1px; font-weight: 600; transition: all 0.2s;
-}
-.article-pdf-btn:hover {
-  background: var(--sun); color: var(--void);
-  box-shadow: 0 0 14px rgba(255, 178, 62, 0.4);
-}
 .article-main-title {
   font-size: clamp(26px, 4.5vw, 36px); color: var(--ink); line-height: 1.18; margin: 0 0 10px;
 }
@@ -699,7 +688,6 @@ const DEPARTMENTS = [
     tagline: "The Night Sky",
     leads: "Jainil (Head) &nbsp;|&nbsp; Jal (Co-Head)",
     icon: "🔭",
-    pdfUrl: "observational_astronomy.pdf",
     summary: "Following real celestial events and deep-sky observations, from high-energy cosmic explosions to newborn star systems captured by modern space telescopes.",
     articles: [
       {
@@ -761,7 +749,6 @@ const DEPARTMENTS = [
     tagline: "Science Through Code",
     leads: "Yash (Head)",
     icon: "💻",
-    pdfUrl: "space_data.pdf",
     summary: "Exploring how software turns raw sensor signals from orbit and observatories into scientific discoveries, open public archives, and clean astronomical images.",
     articles: [
       {
@@ -927,7 +914,6 @@ function renderReaderPage() {
           <div class="article-header">
             <div class="article-kicker-bar">
               <span>Wing ${dept.num} • ${dept.tagline}</span>
-              ${dept.pdfUrl ? `<a href="${dept.pdfUrl}" target="_blank" class="article-pdf-btn">📄 View Original LaTeX PDF</a>` : ''}
             </div>
             <h2 class="serif article-main-title">${dept.name}</h2>
             <div class="article-meta-line">
