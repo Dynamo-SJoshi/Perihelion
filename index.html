@@ -54,8 +54,13 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
   width: 280px; margin: 0 auto 20px;
   filter: url(#remove-black); opacity: 0.95;
 }
-@media (max-width: 760px) {
+@media (max-width: 768px) {
   #intro-logo { width: 180px; }
+  /* Month cards on analemma: hide thoughts/quotes to relieve congestion on mobile */
+  .card p.quote { display: none !important; }
+  .card { padding: 8px 10px; border-radius: 8px; }
+  .card h3 { margin: 0; font-size: 21px; text-align: center; }
+  .card .read-btn { margin-top: 6px; padding: 4px 10px; font-size: 10px; }
 }
 
 /* Moon Phase */
