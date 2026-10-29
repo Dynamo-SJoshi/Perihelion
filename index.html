@@ -75,12 +75,19 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 /* Newsletter Reader Overlay */
 #reader-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(4, 6, 18, 0.94); backdrop-filter: blur(14px);
+  background: rgba(4, 6, 18, 0.45);
+  backdrop-filter: blur(1.5px);
+  -webkit-backdrop-filter: blur(1.5px);
   z-index: 10000; display: flex; justify-content: center; align-items: center;
   opacity: 0; pointer-events: none; transition: opacity 0.35s ease;
   overflow: hidden; padding: 20px;
 }
 #reader-overlay.visible { opacity: 1; pointer-events: auto; }
+
+#reader-sky {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  pointer-events: none; z-index: 0;
+}
 
 #close-reader {
   position: fixed; top: 20px; right: 24px; z-index: 10005;
@@ -96,6 +103,7 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 /* Reader Shell (Centers card & anchors side arrows directly to its borders) */
 .reader-shell {
   position: relative;
+  z-index: 10;
   width: 100%;
   max-width: min(880px, calc(100vw - 120px));
   height: min(86vh, 740px);
@@ -855,6 +863,7 @@ body { cursor: default; }
 </div>
 </div></div></section>
 <div id="reader-overlay" role="dialog" aria-modal="true" aria-label="Newsletter Reader">
+  <canvas id="reader-sky" aria-hidden="true"></canvas>
   <button id="close-reader" onclick="closeEdition()" aria-label="Close reader">✕ Back to Archive</button>
   
   <div class="reader-shell">
@@ -1141,15 +1150,20 @@ const DEPARTMENTS = [
   }
 ];
 
+let isReaderOpen = false;
+
 function openEdition(index) {
+  isReaderOpen = true;
   currentEditionIndex = index;
   currentReaderPage = 0;
   $('reader-overlay').classList.add('visible');
   document.body.style.overflow = 'hidden';
   renderReaderPage();
+  if (!RM && typeof requestReaderFrame === 'function') requestReaderFrame();
 }
 
 function closeEdition() {
+  isReaderOpen = false;
   curCard = null;
   if (typeof tc !== 'undefined') tc.classList.remove('locked');
   $('reader-overlay').classList.remove('visible');
@@ -1464,7 +1478,7 @@ if ($('warp-btn')) {
 }
 }
 
-/* starfield, stretched by scroll speed */
+/* starfield, stretched by scroll speed (Original Main Sky Animation) */
 const cv=$('sky'),cx=cv.getContext('2d');let w,h,stars=[],vel=0,lastY=scrollY,isWarping=false;
 function size(){w=cv.width=innerWidth;h=cv.height=innerHeight;stars=Array.from({length:Math.min(520,w*h/2800|0)},()=>({x:(Math.random()-.5)*w*2,y:(Math.random()-.5)*h*2,z:20+Math.random()*w}))}
 addEventListener('resize',size);size();
@@ -1480,6 +1494,251 @@ cx.beginPath();cx.moveTo(px,py);cx.lineTo(x+.01,y);cx.stroke()}
 scenes();
 if(!RM)requestAnimationFrame(loop)}
 loop();if(RM)addEventListener('scroll',scenes,{passive:true});
+
+/* Reader Flanks: Procedural Deep Space Nebula & High-Velocity Starfield (Active ONLY when reader card is open) */
+const rcv=$('reader-sky'),rcx=rcv?rcv.getContext('2d'):null;
+let rw,rh,rStars=[],rMeteors=[],rMeteorTimer=0;
+const nebulaCv=document.createElement('canvas'),ncx=nebulaCv.getContext('2d');
+
+function generateNebula(){
+  if(!rcx) return;
+  nebulaCv.width=rw;nebulaCv.height=rh;
+  ncx.clearRect(0,0,rw,rh);
+
+  function puff(x,y,r,innerColor,outerColor,comp='screen'){
+    ncx.save();ncx.globalCompositeOperation=comp;
+    const g=ncx.createRadialGradient(x,y,0,x,y,r);
+    g.addColorStop(0,innerColor);
+    g.addColorStop(0.4,outerColor);
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ncx.fillStyle=g;ncx.beginPath();ncx.arc(x,y,r,0,Math.PI*2);ncx.fill();
+    ncx.restore();
+  }
+
+  function buildComplex(spine,pal){
+    for(const p of spine){
+      puff(p.x,p.y,p.r*1.75,pal.hazeInner,pal.hazeOuter,'screen');
+    }
+
+    for(let i=0;i<spine.length-1;i++){
+      const p1=spine[i],p2=spine[i+1];
+      const steps=20;
+      for(let s=0;s<=steps;s++){
+        const t=s/steps;
+        const nx=p1.x+(p2.x-p1.x)*t+Math.sin(t*11+i*4)*(p1.r*0.28);
+        const ny=p1.y+(p2.y-p1.y)*t+Math.cos(t*13+i*3)*(p1.r*0.22);
+        const nr=(p1.r+(p2.r-p1.r)*t)*(0.65+Math.sin(t*7)*0.3);
+
+        puff(nx,ny,nr,pal.coreInner,pal.coreOuter,'screen');
+
+        if(s%2===0){
+          const ix=nx+Math.cos(t*8)*(nr*0.35);
+          const iy=ny+Math.sin(t*8)*(nr*0.35);
+          puff(ix,iy,nr*0.65,pal.ionInner,pal.ionOuter,'screen');
+        }
+      }
+    }
+
+    ncx.save();ncx.globalCompositeOperation='source-over';
+    for(let i=0;i<spine.length-1;i++){
+      const p1=spine[i],p2=spine[i+1];
+      const steps=8;
+      for(let s=0;s<=steps;s++){
+        const t=s/steps;
+        const dx=p1.x+(p2.x-p1.x)*t+Math.cos(t*8+i*3)*(p1.r*0.3)+20;
+        const dy=p1.y+(p2.y-p1.y)*t+Math.sin(t*6+i*5)*(p1.r*0.3)-15;
+        const dr=(p1.r*0.42)*(0.55+Math.random()*0.4);
+
+        const dg=ncx.createRadialGradient(dx,dy,0,dx,dy,dr);
+        dg.addColorStop(0,'rgba(4,6,18,0.72)');
+        dg.addColorStop(0.65,'rgba(4,6,18,0.3)');
+        dg.addColorStop(1,'rgba(4,6,18,0)');
+        ncx.fillStyle=dg;ncx.beginPath();ncx.arc(dx,dy,dr,0,Math.PI*2);ncx.fill();
+      }
+    }
+    ncx.restore();
+
+    ncx.save();
+    for(let k=0;k<32;k++){
+      const seg=Math.floor(Math.random()*(spine.length-1));
+      const t=Math.random();
+      const p1=spine[seg],p2=spine[seg+1];
+      const sx=p1.x+(p2.x-p1.x)*t+(Math.random()-0.5)*p1.r*1.3;
+      const sy=p1.y+(p2.y-p1.y)*t+(Math.random()-0.5)*p1.r*1.3;
+      const starRadius=Math.random()<0.22?2.4:1.1;
+      const starAlpha=0.55+Math.random()*0.45;
+
+      const sg=ncx.createRadialGradient(sx,sy,0,sx,sy,starRadius*9);
+      sg.addColorStop(0,`rgba(255,235,205,${starAlpha*0.5})`);
+      sg.addColorStop(0.35,`rgba(180,220,255,${starAlpha*0.2})`);
+      sg.addColorStop(1,'rgba(0,0,0,0)');
+      ncx.fillStyle=sg;ncx.beginPath();ncx.arc(sx,sy,starRadius*9,0,Math.PI*2);ncx.fill();
+
+      ncx.fillStyle=`rgba(255,255,255,${starAlpha})`;
+      ncx.beginPath();ncx.arc(sx,sy,starRadius,0,Math.PI*2);ncx.fill();
+
+      if(Math.random()<0.2){
+        ncx.strokeStyle=`rgba(255,255,255,${starAlpha*0.65})`;
+        ncx.lineWidth=0.8;
+        ncx.beginPath();
+        ncx.moveTo(sx-12,sy);ncx.lineTo(sx+12,sy);
+        ncx.moveTo(sx,sy-12);ncx.lineTo(sx,sy+12);
+        ncx.stroke();
+      }
+    }
+    ncx.restore();
+  }
+
+  // Left Flank Nebula Complex (Deep Cosmic Orion/Carina: Violet, Rose, Cyan)
+  const leftSpine=[
+    {x:rw*0.04,y:-rh*0.05,r:Math.min(280,rw*0.24)},
+    {x:rw*0.15,y:rh*0.24, r:Math.min(310,rw*0.27)},
+    {x:rw*0.07,y:rh*0.52, r:Math.min(340,rw*0.29)},
+    {x:rw*0.16,y:rh*0.82, r:Math.min(300,rw*0.26)},
+    {x:rw*0.04,y:rh*1.08, r:Math.min(260,rw*0.22)}
+  ];
+  buildComplex(leftSpine,{
+    hazeInner:'rgba(88,28,135,0.26)',
+    hazeOuter:'rgba(49,46,129,0.08)',
+    coreInner:'rgba(219,39,119,0.28)',
+    coreOuter:'rgba(126,34,206,0.15)',
+    ionInner: 'rgba(6,182,212,0.26)',
+    ionOuter: 'rgba(14,165,233,0.09)'
+  });
+
+  // Right Flank Nebula Complex (Stellar Nursery & Lagoon: Amber, Crimson, Turquoise)
+  const rightSpine=[
+    {x:rw*0.96,y:-rh*0.08,r:Math.min(270,rw*0.23)},
+    {x:rw*0.84,y:rh*0.26, r:Math.min(320,rw*0.27)},
+    {x:rw*0.93,y:rh*0.56, r:Math.min(350,rw*0.30)},
+    {x:rw*0.83,y:rh*0.85, r:Math.min(300,rw*0.26)},
+    {x:rw*0.96,y:rh*1.10, r:Math.min(260,rw*0.22)}
+  ];
+  buildComplex(rightSpine,{
+    hazeInner:'rgba(194,65,12,0.24)',
+    hazeOuter:'rgba(136,19,55,0.09)',
+    coreInner:'rgba(245,158,11,0.26)',
+    coreOuter:'rgba(225,29,72,0.15)',
+    ionInner: 'rgba(20,184,166,0.22)',
+    ionOuter: 'rgba(56,189,248,0.08)'
+  });
+}
+
+function sizeReaderSky(){
+  if(!rcv) return;
+  rw=rcv.width=innerWidth;
+  rh=rcv.height=innerHeight;
+  generateNebula();
+  const count=Math.min(950,Math.max(500,(rw*rh/1600)|0));
+  rStars=Array.from({length:count},()=>{
+    const isZoomer=Math.random()<0.28;
+    return {
+      x:(Math.random()-0.5)*rw*2.4,
+      y:(Math.random()-0.5)*rh*2.4,
+      z:20+Math.random()*rw,
+      baseSpeed:isZoomer?(6.5+Math.random()*9.5):(Math.random()<0.5?(2.8+Math.random()*2.5):(1.4+Math.random()*1.4)),
+      size:Math.random()<0.18?2.2:(0.8+Math.random()*0.9),
+      color:Math.random()<0.2?'rgba(255,225,185,':(Math.random()<0.35?'rgba(180,225,255,':'rgba(235,242,255,')
+    };
+  });
+}
+addEventListener('resize',sizeReaderSky);sizeReaderSky();
+
+function readerLoop(){
+  if(!isReaderOpen || !rcx) return;
+  rcx.clearRect(0,0,rw,rh);
+
+  // 1. Procedural deep space nebula
+  rcx.drawImage(nebulaCv,0,0);
+
+  // 2. High-frequency 3D Stars zooming past
+  const k=rw*0.5;
+  for(const s of rStars){
+    const pz=s.z;
+    s.z-=s.baseSpeed;
+    if(s.z<20){
+      s.z=rw;
+      s.x=(Math.random()-0.5)*rw*2.4;
+      s.y=(Math.random()-0.5)*rh*2.4;
+    }else if(s.z>rw){
+      s.z=20;
+    }
+
+    const f=1-s.z/rw;
+    const x=rw/2+(s.x/s.z)*k;
+    const y=rh/2+(s.y/s.z)*k;
+    const streakMult=s.z<180?2.6:1.25;
+    const tailZ=s.z+s.baseSpeed*streakMult;
+    const px=rw/2+(s.x/tailZ)*k;
+    const py=rh/2+(s.y/tailZ)*k;
+
+    rcx.strokeStyle=s.color+clamp(0.16+f*0.88,0,1)+')';
+    rcx.lineWidth=clamp((0.6+f*2.8)*s.size,0.6,4.2);
+    rcx.beginPath();
+    rcx.moveTo(px,py);
+    rcx.lineTo(x+0.01,y);
+    rcx.stroke();
+  }
+
+  // 3. Frequent Shooting Stars / Meteors (Leonids)
+  if(!RM){
+    rMeteorTimer++;
+    if(rMeteorTimer>65 && rMeteors.length<3){
+      if(Math.random()<0.4){
+        rMeteorTimer=0;
+        const startLeft=Math.random()<0.5;
+        const sx=startLeft?Math.random()*rw*0.45:rw*0.55+Math.random()*rw*0.45;
+        const sy=Math.random()*rh*0.45;
+        const angle=Math.PI/4+(Math.random()-0.5)*0.45;
+        const spd=20+Math.random()*22;
+        rMeteors.push({
+          x:sx,y:sy,
+          vx:Math.cos(angle)*spd*(startLeft?1:-0.9),
+          vy:Math.sin(angle)*spd,
+          len:140+Math.random()*160,
+          life:1.0,
+          decay:0.02+Math.random()*0.022,
+          color:Math.random()<0.25?'255,215,140':(Math.random()<0.5?'160,225,255':'230,240,255')
+        });
+      }
+    }
+
+    for(let i=rMeteors.length-1;i>=0;i--){
+      const m=rMeteors[i];
+      m.x+=m.vx;
+      m.y+=m.vy;
+      m.life-=m.decay;
+      if(m.life<=0||m.x<-100||m.x>rw+100||m.y>rh+100){
+        rMeteors.splice(i,1);
+        continue;
+      }
+      const dist=Math.hypot(m.vx,m.vy);
+      const tailX=m.x-(m.vx/dist)*m.len*m.life;
+      const tailY=m.y-(m.vy/dist)*m.len*m.life;
+      const grad=rcx.createLinearGradient(tailX,tailY,m.x,m.y);
+      grad.addColorStop(0,`rgba(${m.color},0)`);
+      grad.addColorStop(0.7,`rgba(${m.color},${m.life*0.7})`);
+      grad.addColorStop(1,`rgba(255,255,255,${m.life})`);
+      rcx.strokeStyle=grad;
+      rcx.lineWidth=2.2*m.life;
+      rcx.beginPath();
+      rcx.moveTo(tailX,tailY);
+      rcx.lineTo(m.x,m.y);
+      rcx.stroke();
+
+      rcx.fillStyle=`rgba(255,255,255,${m.life})`;
+      rcx.beginPath();
+      rcx.arc(m.x,m.y,2.5*m.life,0,Math.PI*2);
+      rcx.fill();
+    }
+  }
+
+  if(isReaderOpen && !RM) requestAnimationFrame(readerLoop);
+}
+
+function requestReaderFrame(){
+  if(isReaderOpen && !RM) requestAnimationFrame(readerLoop);
+}
 
 /* Target Cursor logic */
 const tc = document.createElement('div');
