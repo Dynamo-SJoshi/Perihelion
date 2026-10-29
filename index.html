@@ -401,38 +401,311 @@ a:focus-visible,input:focus-visible,button:focus-visible{outline:2px solid var(-
 }
 .journal-ref-link:hover { opacity: 0.8; }
 
-/* Mobile Media Queries */
+.journal-takeaway {
+  background: rgba(255, 178, 62, 0.08);
+  border-left: 3px solid var(--sun);
+  border-radius: 0 8px 8px 0;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+.takeaway-label {
+  display: block;
+  font-size: 10.5px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--sun);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.journal-takeaway p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--ink);
+  margin: 0;
+}
+
+/* Responsive / Mobile Media Queries for Newsletter Reader */
+.pill-short { display: none; }
+.reader-close-btn, .mobile-nav-arrow { display: none; }
+
 @media (max-width: 960px) {
   .reader-shell { max-width: calc(100vw - 80px); height: min(90vh, 760px); }
-  .reader-topbar { padding: 16px 24px 14px; }
-  #reader-content { padding: 22px 24px; }
-  .reader-nav-strip { padding: 12px 14px 14px; }
+  .reader-topbar { padding: 14px 20px; }
+  #reader-content { padding: 20px 22px; }
   .reader-nav-arrow { width: 44px; height: 44px; }
   .reader-nav-arrow.left-arrow { left: -16px; }
   .reader-nav-arrow.right-arrow { right: -16px; }
-  .reader-nav-arrow svg { width: 20px; height: 20px; }
 }
-@media (max-width: 720px) {
-  .reader-shell { max-width: 100%; margin: 0 4px; }
-  .reader-nav-arrow.left-arrow { left: 4px; }
-  .reader-nav-arrow.right-arrow { right: 4px; }
-  .dept-card-btn {
-    flex: 0 1 calc((100% - 14px) / 2);
-    width: calc((100% - 14px) / 2);
-    max-width: calc((100% - 14px) / 2);
-    min-width: 140px;
+
+@media (max-width: 768px) {
+  #reader-overlay {
+    padding: env(safe-area-inset-top, 6px) 6px env(safe-area-inset-bottom, 6px);
   }
-}
-@media (max-width: 500px) {
-  #reader-overlay { padding: 50px 8px 20px; }
-  .reader-card-frame { height: min(92vh, 760px); border-radius: 14px; }
-  .dept-card-btn {
-    flex: 0 1 100%;
-    width: 100%;
+  .reader-shell {
     max-width: 100%;
+    width: 100%;
+    height: 98vh;
+    height: 98dvh;
+    margin: 0;
   }
-  .dept-highlights-list { grid-template-columns: 1fr; }
-  .reader-pill { font-size: 10px; padding: 4px 8px; }
+  .reader-card-frame {
+    border-radius: 16px;
+    height: 100%;
+  }
+  /* Hide side floating circle buttons on mobile so they don't block content */
+  .reader-nav-arrow {
+    display: none !important;
+  }
+  /* Hide floating button above frame on mobile */
+  #close-reader {
+    display: none !important;
+  }
+  /* Topbar compact layout with inline controls */
+  .reader-topbar {
+    padding: 10px 14px;
+  }
+  .reader-badge {
+    font-size: 10px;
+    letter-spacing: 1px;
+    max-width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .reader-top-controls {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .mobile-nav-arrow {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(154, 163, 199, 0.12);
+    border: 1px solid rgba(154, 163, 199, 0.25);
+    color: var(--sun);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s;
+  }
+  .mobile-nav-arrow:disabled {
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .mobile-nav-arrow:active {
+    background: var(--sun);
+    color: var(--void);
+  }
+  .reader-page-indicator {
+    padding: 3px 8px;
+    font-size: 10px;
+    border-radius: 10px;
+  }
+  .reader-close-btn {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(255, 178, 62, 0.15);
+    border: 1px solid var(--sun);
+    color: var(--sun);
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    margin-left: 2px;
+  }
+  .reader-close-btn:active {
+    background: var(--sun);
+    color: var(--void);
+  }
+
+  /* Content area on mobile */
+  #reader-content {
+    padding: 14px 14px 16px;
+  }
+
+  /* Welcome Header on mobile */
+  .welcome-header {
+    margin-bottom: 12px;
+  }
+  .welcome-tag {
+    font-size: 9px;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .welcome-title {
+    font-size: clamp(22px, 5.5vw, 26px);
+    margin: 0 0 6px;
+  }
+  .welcome-quote {
+    font-size: 12px;
+    margin: 0 auto 6px;
+    line-height: 1.4;
+  }
+  .welcome-intro-text {
+    font-size: 12px;
+    line-height: 1.5;
+    margin: 0 auto 12px;
+  }
+  .dept-grid-title {
+    font-size: 10px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  /* Department rows on mobile */
+  .dept-grid {
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .dept-card-btn {
+    flex: 0 1 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 50px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .dept-card-top {
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+  }
+  .dept-card-num {
+    font-size: 12px;
+  }
+  .dept-card-info {
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+  .dept-card-name {
+    font-size: 13.5px;
+    margin: 0 0 2px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .dept-card-tagline {
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Bottom Navigation Pills on mobile */
+  .pill-full { display: none !important; }
+  .pill-short { display: inline !important; }
+  .reader-nav-strip {
+    padding: 8px 6px 10px;
+    gap: 4px;
+    justify-content: space-between;
+    overflow-x: hidden;
+  }
+  .reader-pill {
+    flex: 1 1 0%;
+    padding: 5px 3px;
+    font-size: 9.5px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 0;
+  }
+
+  /* Articles on mobile */
+  .article-header {
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+  }
+  .article-kicker-bar {
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .article-main-title {
+    font-size: 21px;
+    line-height: 1.2;
+    margin: 0 0 6px;
+  }
+  .article-meta-line {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .article-lead-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+  .dept-summary-p {
+    font-size: 13px;
+    line-height: 1.55;
+    margin-bottom: 16px;
+  }
+  .journal-article {
+    padding: 13px 14px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+  }
+  .journal-article-kicker {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    margin-bottom: 4px;
+  }
+  .journal-article-title {
+    font-size: 16.5px;
+    line-height: 1.25;
+    margin: 0 0 4px;
+  }
+  .journal-article-subtitle {
+    font-size: 12px;
+    line-height: 1.45;
+    margin: 0 0 10px;
+  }
+  .journal-article-p {
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 0 0 10px;
+  }
+  .journal-figure {
+    margin: 10px 0 12px;
+    border-radius: 8px;
+  }
+  .journal-fig-img {
+    max-height: 220px;
+  }
+  .journal-fig-caption {
+    font-size: 10.5px;
+    padding: 6px 10px;
+    line-height: 1.4;
+  }
+  .journal-takeaway {
+    padding: 8px 10px;
+    margin: 10px 0;
+  }
+  .journal-takeaway p {
+    font-size: 12px;
+  }
+  .journal-ref-heading {
+    font-size: 10px;
+  }
+  .journal-ref-list li {
+    font-size: 11px;
+    word-break: break-all;
+  }
+  .dept-highlights-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 32px; }
@@ -596,7 +869,12 @@ body { cursor: default; }
         <div class="reader-badge">
           <span id="reader-edition-tag">ASTRA PERIHELION • NOVEMBER</span>
         </div>
-        <div class="reader-page-indicator" id="reader-page-indicator">1 / 6</div>
+        <div class="reader-top-controls">
+          <button class="mobile-nav-arrow" id="mobile-prev-btn" onclick="navReader(-1)" aria-label="Previous page">‹</button>
+          <div class="reader-page-indicator" id="reader-page-indicator">1 / 6</div>
+          <button class="mobile-nav-arrow" id="mobile-next-btn" onclick="navReader(1)" aria-label="Next page">›</button>
+          <button class="reader-close-btn" onclick="closeEdition()" aria-label="Close reader">✕</button>
+        </div>
       </header>
 
       <div id="reader-content">
@@ -687,7 +965,6 @@ const DEPARTMENTS = [
     name: "Observational Astronomy",
     tagline: "The Night Sky",
     leads: "Jainil (Head) &nbsp;|&nbsp; Jal (Co-Head)",
-    icon: "🔭",
     summary: "Following real celestial events and deep-sky observations, from high-energy cosmic explosions to newborn star systems captured by modern space telescopes.",
     articles: [
       {
@@ -733,7 +1010,6 @@ const DEPARTMENTS = [
     name: "Astrophysics & Research",
     tagline: "The Big Questions",
     leads: "Aditya (Head) &nbsp;|&nbsp; Mridul (Co-Head)",
-    icon: "🌌",
     summary: "Demystifying the cosmos through friendly discussions. We break down space science into simple, intuitive concepts that anyone can enjoy and learn from.",
     highlights: [
       { title: "Curiosity Discussion Circles", desc: "Informal, beginner-friendly chats exploring black holes, how stars live and die, and what we know about our universe." },
@@ -748,7 +1024,6 @@ const DEPARTMENTS = [
     name: "Space Data & Software",
     tagline: "Science Through Code",
     leads: "Yash (Head)",
-    icon: "💻",
     summary: "Exploring how software turns raw sensor signals from orbit and observatories into scientific discoveries, open public archives, and clean astronomical images.",
     articles: [
       {
@@ -797,14 +1072,58 @@ const DEPARTMENTS = [
     name: "Astro-Tech & Instrumentation",
     tagline: "Hands-On Building",
     leads: "Aryan (Head) &nbsp;|&nbsp; Pratik (Co-Head)",
-    icon: "⚙️",
-    summary: "Learning how observation equipment works behind the scenes, from basic optics and telescope mirrors to simple DIY hobbyist gear.",
-    highlights: [
-      { title: "How Telescopes Work", desc: "A hands-on walkthrough of lenses, mirrors, and focal lengths—understanding how telescopes bring faint starlight into clear focus." },
-      { title: "Equipment Care & Setup", desc: "Practical tips for assembling, balancing, and caring for telescopes, mounts, and tripods during outdoor observation sessions." },
-      { title: "DIY Stargazing Gear", desc: "Fun, low-cost projects like phone-to-eyepiece adapters and finder aids to make observing comfortable for beginners." }
+    summary: "Exploring breakthrough hardware, miniaturized scientific sensors for CubeSats, and compact LiDAR systems designed to keep spacecraft safe in orbit.",
+    articles: [
+      {
+        kicker: "Technology Highlight • CubeSat Payload",
+        title: "NASA Develops Compact Particle Detector for CubeSats",
+        subtitle: "Miniaturized sensors enable high-fidelity measurements of energetic particles in space",
+        figure: {
+          src: "article_real_instrument.png",
+          alt: "The REAL instrument developed for the CubeSat mission",
+          caption: "Figure 1: The REAL instrument developed for the CubeSat mission. (a) Instrument inspection before spacecraft integration; (b) REAL instrument showing its sensor apertures and electronics. Image credit: Johns Hopkins APL / Craig Weiman."
+        },
+        paragraphs: [
+          "NASA has highlighted a compact scientific instrument designed to measure energetic particles in Earth's radiation environment with high precision. Developed for the Relativistic Electron Atmospheric Loss (REAL) CubeSat mission, the instrument demonstrates how advanced sensor miniaturization can bring sophisticated scientific capabilities to small satellites.",
+          "Earth is surrounded by the Van Allen radiation belts, regions where energetic charged particles are trapped by the planet's magnetic field. These particles can affect satellite electronics and cause operational anomalies. Understanding their behaviour is therefore important for studying space weather and improving the reliability of spacecraft.",
+          "Conventional particle detectors on small satellites may have limited viewing directions, restricting their ability to capture the full behaviour of energetic particles. The REAL instrument addresses this challenge through three sensor heads designed to measure different particle energy ranges: a miniature electrostatic analyzer for low-energy particles, and solid-state detectors for medium- and high-energy particles. Together, they provide simultaneous measurements across multiple viewing angles."
+        ],
+        figure2: {
+          src: "article_real_spectrogram.png",
+          alt: "Observations from REAL's low-energy electrostatic analyzer",
+          caption: "Figure 2: First observations from REAL's low-energy electrostatic analyzer on December 6, 2025. The top spectrogram shows low-energy electrons detected close to Earth's magnetic field direction, while the bottom shows measurements perpendicular to the field. Image credit: NASA / Johns Hopkins APL."
+        },
+        paragraphs2: [
+          "One important target is the observation of electron microbursts: brief, intense bursts of energetic electrons that precipitate from Earth's radiation belts into the atmosphere. High temporal resolution allows researchers to investigate how particles move and are lost from the radiation belts, advancing our understanding of space weather and satellite protection."
+        ],
+        keyTakeaway: "The REAL instrument demonstrates how miniaturized, multi-directional, energy-resolving sensors can bring sophisticated particle measurements to small satellites, advancing space-weather research and future CubeSat missions.",
+        references: [
+          { text: "NASA Science: A New Compact Instrument Enables High-Fidelity Measurements of Energetic Particles on CubeSats", url: "https://science.nasa.gov/science-research/science-enabling-technology/technology-highlights/a-new-compact-instrument-enables-high-fidelity-measurements-of-energetic-particles-on-cubesats/" }
+        ]
+      },
+      {
+        kicker: "Space Debris & LiDAR Detection",
+        title: "Can We Detect Millimetre-Sized Space Debris Without Touching It?",
+        subtitle: "Compact LiDAR Technology for Space Debris Detection",
+        figure: {
+          src: "article_debris.png",
+          alt: "Visualization of orbital debris surrounding Earth viewed from above North Pole",
+          caption: "Figure 1: Computer-generated visualization of orbital debris surrounding Earth, viewed from above the North Pole. Dots represent tracked objects (not to scale). Image credit: NASA Orbital Debris Program Office (NASA ODPO)."
+        },
+        paragraphs: [
+          "As the number of satellites in Earth's orbit continues to grow, detecting tiny fragments of space debris has become increasingly important for spacecraft safety. Addressing this challenge, The Aerospace Corporation has developed a compact, low-power LiDAR (Light Detection and Ranging) instrument designed to detect and characterize millimetre- and sub-millimetre-sized debris.",
+          "In March 2026, the instrument successfully completed hypervelocity testing at NASA's White Sands Test Facility. The tests demonstrated its ability to detect debris measuring 0.1–1 mm travelling at speeds of approximately 4–7.2 km/s, representative of velocities encountered in low Earth orbit.",
+          "A key feature of this instrument is its compact design, with a 12U form factor and a mass of approximately 25 kg. It operates independently of sunlight and can detect particles without physical contact. Beyond orbital debris monitoring, the technology may also be used to characterize lunar and Martian dust, as well as micrometeoroids.",
+          "The development represents a promising advancement in space instrumentation, demonstrating how compact sensing systems can help address the growing challenge of orbital debris. Further analysis of experimental data will support continued evaluation for future operational space missions."
+        ],
+        keyTakeaway: "Compact LiDAR systems could provide spacecraft with a new way to detect and characterize extremely small debris particles, supporting safer satellite operations and future space exploration.",
+        references: [
+          { text: "NASA HESTO: SmallSat-Compatible Space Debris Detection LiDAR", url: "https://hesto.smce.nasa.gov/2026/09/10/smallsat-compatible-space-debris-detection-lidar/" },
+          { text: "NASA Orbital Debris Program Office (NASA ODPO) Photo Gallery", url: "https://orbitaldebris.jsc.nasa.gov/" }
+        ]
+      }
     ],
-    tags: ["Optics Basics", "Telescope Setup", "Hands-On Learning", "Equipment Care", "DIY Gear"]
+    tags: ["CubeSat Payloads", "REAL Mission", "Space Debris", "Orbital LiDAR", "Radiation Belts", "Miniaturization"]
   },
   {
     id: "sat",
@@ -812,7 +1131,6 @@ const DEPARTMENTS = [
     name: "Satellite & Communication",
     tagline: "Listening From Earth",
     leads: "Namya (Head) &nbsp;|&nbsp; Hiren (Co-Head)",
-    icon: "📡",
     summary: "Understanding the satellites that orbit above us and exploring how radio signals connect our planet with human exploration in space.",
     highlights: [
       { title: "Spotting Satellites Overhead", desc: "Learning how to predict and spot the International Space Station and communication satellites passing across the Surat sky." },
@@ -865,6 +1183,8 @@ function renderReaderPage() {
   // Update Arrow States (bounded navigation)
   $('reader-prev-btn').disabled = (currentReaderPage === 0);
   $('reader-next-btn').disabled = (currentReaderPage === totalPages - 1);
+  if ($('mobile-prev-btn')) $('mobile-prev-btn').disabled = (currentReaderPage === 0);
+  if ($('mobile-next-btn')) $('mobile-next-btn').disabled = (currentReaderPage === totalPages - 1);
   
   const contentEl = $('reader-content');
   
@@ -892,9 +1212,8 @@ function renderReaderPage() {
             <div class="dept-card-btn" onclick="jumpReaderPage(${idx + 1})" role="button" tabindex="0">
               <div class="dept-card-top">
                 <span class="dept-card-num">${dept.num}</span>
-                <span class="dept-card-icon">${dept.icon}</span>
               </div>
-              <div>
+              <div class="dept-card-info">
                 <div class="dept-card-name">${dept.name}</div>
                 <div class="dept-card-tagline">${dept.tagline}</div>
               </div>
@@ -939,6 +1258,22 @@ function renderReaderPage() {
 
               ${art.paragraphs.map(p => `<p class="journal-article-p">${p}</p>`).join('')}
 
+              ${art.figure2 ? `
+                <figure class="journal-figure">
+                  <img src="${art.figure2.src}" alt="${art.figure2.alt}" class="journal-fig-img" loading="lazy">
+                  <figcaption class="journal-fig-caption">${art.figure2.caption}</figcaption>
+                </figure>
+              ` : ''}
+
+              ${art.paragraphs2 ? art.paragraphs2.map(p => `<p class="journal-article-p">${p}</p>`).join('') : ''}
+
+              ${art.keyTakeaway ? `
+                <div class="journal-takeaway">
+                  <span class="takeaway-label">Key Takeaway</span>
+                  <p>${art.keyTakeaway}</p>
+                </div>
+              ` : ''}
+
               ${art.references && art.references.length > 0 ? `
                 <div class="journal-references">
                   <div class="journal-ref-heading">References & Sources</div>
@@ -967,7 +1302,6 @@ function renderReaderPage() {
               <span>${dept.num}</span>
               <span>/</span>
               <span>${dept.tagline}</span>
-              <span style="margin-left: auto; font-size: 18px;">${dept.icon}</span>
             </div>
             <h2 class="serif dept-page-title">${dept.name}</h2>
             <div class="dept-page-meta">
@@ -1002,13 +1336,18 @@ function renderReaderPage() {
   // Render Nav Strip Pills
   const navStrip = $('reader-nav-strip');
   const navItems = [
-    { label: "Intro", page: 0 },
-    ...DEPARTMENTS.map((d, i) => ({ label: d.name.split(' ')[0], page: i + 1 }))
+    { label: "Intro", short: "Intro", page: 0 },
+    { label: "Observational", short: "Obs", page: 1 },
+    { label: "Astrophysics", short: "Astro", page: 2 },
+    { label: "Space Data", short: "Space", page: 3 },
+    { label: "Astro-Tech", short: "Tech", page: 4 },
+    { label: "Satellite", short: "Sat", page: 5 }
   ];
   navStrip.innerHTML = navItems.map(item => `
     <button class="reader-pill ${currentReaderPage === item.page ? 'active' : ''}" 
             onclick="jumpReaderPage(${item.page})">
-      ${item.label}
+      <span class="pill-full">${item.label}</span>
+      <span class="pill-short">${item.short}</span>
     </button>
   `).join('');
 
