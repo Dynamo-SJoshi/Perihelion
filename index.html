@@ -1022,15 +1022,52 @@ const DEPARTMENTS = [
     id: "astro",
     num: "02",
     name: "Astrophysics & Research",
-    tagline: "The Big Questions",
+    tagline: "Beyond the Event Horizon",
     leads: "Aditya (Head) &nbsp;|&nbsp; Mridul (Co-Head)",
-    summary: "Demystifying the cosmos through friendly discussions. We break down space science into simple, intuitive concepts that anyone can enjoy and learn from.",
-    highlights: [
-      { title: "Curiosity Discussion Circles", desc: "Informal, beginner-friendly chats exploring black holes, how stars live and die, and what we know about our universe." },
-      { title: "Astronomy News & Discoveries", desc: "Summarizing recent space telescope images, exoplanet discoveries, and planetary mission milestones in plain English." },
-      { title: "Cosmic Questions", desc: "Encouraging students of all branches to ask big questions about gravity, the cosmic timeline, and the scale of the universe." }
+    summary: "Exploring black holes, relativistic jets, and the galaxies they shape through multi-wavelength radio observations and astrophysical theory.",
+    articles: [
+      {
+        kicker: "Research Spotlight • Radio Astronomy",
+        title: "A Galaxy That Restarted Its Black Hole Four Times",
+        subtitle: "Radio observations reveal four generations of activity from one galaxy's central engine.",
+        figure: {
+          src: "article_restarted_galaxy.png",
+          alt: "Conceptual schematic of four paired radio-hotspot structures around galaxy core J023721.13-010528.5",
+          caption: "Conceptual schematic of four paired radio-hotspot structures around the galaxy's core (J023721.13−010528.5). The colours and geometry are illustrative, demonstrating four episodic jet cycles over millions of years. Image credit: Khadekar, Lal & Athreya / NCRA-TIFR."
+        },
+        paragraphs: [
+          "A giant radio galaxy named J023721.13−010528.5 may preserve an extraordinary record of black-hole activity: evidence for four separate episodes of powerful jets. The study, led by Pavan Vijay Khadekar with Dharam Vir Lal and Ramana Athreya, combines observations from India's upgraded Giant Metrewave Radio Telescope (uGMRT), South Africa's MeerKAT, and the Very Large Array in the United States.",
+          "The radio maps show four pairs of bright features, called hotspots, arranged on opposite sides of the galaxy's core. Their symmetry and radio spectra suggest that the central engine switched on, faded, and launched jets again over time. The structures have estimated ages of roughly 4–21 million years, while the outermost features span about 1.2 megaparsecs (nearly 3.9 million light-years).",
+          "The discovery offers a rare way to study how supermassive black holes cycle between active and quieter phases—and how their outflows reshape the space around galaxies."
+        ],
+        keyTakeaway: "The radio lobes act like a long-lived record of earlier jet activity, allowing astronomers to reconstruct events that unfolded millions of years ago.",
+        references: [
+          { text: "arXiv:2609.08506: J023721.13−010528.5: A Giant S-shaped Radio Galaxy Showing Four Episodes of Jet Activity", url: "https://arxiv.org/abs/2609.08506" },
+          { text: "NCRA–TIFR Press Release: Giant S-shaped Radio Galaxy Observations", url: "http://www.ncra.tifr.res.in/" }
+        ]
+      },
+      {
+        kicker: "Astrophysics Explained • Relativistic Jets",
+        title: "The Power of Black Hole Jets: How Black Holes Shape Galaxies",
+        subtitle: "How a region smaller than a solar system can influence a galaxy thousands of light-years across.",
+        figure: {
+          src: "article_black_hole_jets.png",
+          alt: "Simplified anatomy of a black-hole system powering relativistic jets",
+          caption: "Simplified anatomy of a black-hole system. The jets emerge from the hot, magnetised plasma accretion disk surrounding the black hole, rather than from inside the event horizon. Image credit: NASA / Astrophysics Research."
+        },
+        paragraphs: [
+          "A black hole's gravity is so strong that nothing crossing its event horizon can escape. Yet many actively feeding supermassive black holes are associated with enormous, twin streams of particles known as relativistic jets. These jets do not emerge from inside the black hole. Instead, they are launched from the hot gas and plasma surrounding it, where intense magnetic fields can help channel material outward at speeds approaching the speed of light.",
+          "As the jets travel outward, they can extend far beyond the visible galaxy. When they collide with surrounding gas, they create shocks, inflate vast bubbles, and transfer energy to the galactic environment. This process, often called AGN feedback, can heat gas and slow its cooling, influencing how readily new stars form.",
+          "The effect is not simply destructive: the balance between heating, cooling, and gas supply can be complex. Black-hole jets are therefore more than spectacular cosmic beams—they are one of the ways a galaxy's central black hole can influence the evolution of the entire galaxy."
+        ],
+        keyTakeaway: "Black holes do not need to eject matter from within the event horizon to power jets. The outflow is driven by physics in the surrounding accretion flow and magnetic fields.",
+        references: [
+          { text: "NASA Science: Anatomy of a Black Hole", url: "https://science.nasa.gov/universe/black-holes/anatomy/" },
+          { text: "NASA Science: What Are Active Galactic Nuclei?", url: "https://science.nasa.gov/universe/galaxies/active-galactic-nuclei/" }
+        ]
+      }
     ],
-    tags: ["Astronomy Literacy", "Discussion Circles", "Space Concepts", "Cosmology", "Learning"]
+    tags: ["Black Holes", "Relativistic Jets", "uGMRT Radio", "Event Horizon", "AGN Feedback", "Radio Lobes"]
   },
   {
     id: "data",
@@ -1143,15 +1180,55 @@ const DEPARTMENTS = [
     id: "sat",
     num: "05",
     name: "Satellite & Communication",
-    tagline: "Listening From Earth",
+    tagline: "Connecting Space",
     leads: "Namya (Head) &nbsp;|&nbsp; Hiren (Co-Head)",
-    summary: "Understanding the satellites that orbit above us and exploring how radio signals connect our planet with human exploration in space.",
-    highlights: [
-      { title: "Spotting Satellites Overhead", desc: "Learning how to predict and spot the International Space Station and communication satellites passing across the Surat sky." },
-      { title: "Signals from Space", desc: "Demonstrating how open weather satellite signals can be received and turned into live satellite weather pictures." },
-      { title: "Communication Across Distance", desc: "Simple concepts behind antennas, radio waves, and how space probes beam pictures back across millions of kilometers." }
+    summary: "Optical links, laser communication, and the next generation of satellite networks connecting spacecraft across low Earth orbit and deep space.",
+    articles: [
+      {
+        kicker: "Research Spotlight • Optical Crosslinks",
+        title: "Optical Links Enter Commercial Service",
+        subtitle: "Optical inter-satellite links are becoming part of real data-relay services, while 10-Gbps laser terminals advance on a parallel track.",
+        figure: {
+          src: "article_astrolink.webp",
+          alt: "Astrogate Labs AstroLink Micro 10-Gbps laser communication terminal",
+          caption: "Astrogate Labs AstroLink Micro terminal, an indigenous 10-Gbps space-to-ground laser communication terminal designed for small satellite constellations. Photograph credit: Astrogate Labs."
+        },
+        paragraphs: [
+          "Satellites are beginning to function as connected data networks rather than isolated spacecraft that must each wait for a direct ground-station pass. Optical inter-satellite links (OISLs) use narrow laser beams to transfer data between spacecraft, allowing information to hop across a constellation toward a suitable downlink point.",
+          "On 24 August 2026, Kepler Communications announced commercial services from its next-generation optical data-relay network after commissioning its first tranche. The company describes an IP-based architecture using optical crosslinks and distributed computing in orbit.",
+          "India's work is advancing on a parallel track. On 8 September 2026, Bengaluru-based Astrogate Labs announced an indigenous OISL terminal programme, targeting flight readiness in 2027. It also demonstrated AstroLink Micro, a 10-Gbps laser terminal. Crucially, the 10-Gbps demonstration was described as space-to-ground; it is not evidence of an operational 10-Gbps inter-satellite link. LatConnect 60's 20 August 2026 contract for a terminal designed for up to 10 Gbps likewise concerns space-to-ground data transport.",
+          "The distinction matters: commercial OISL relay services, a 10-Gbps space-to-ground terminal demonstration, and an OISL terminal targeting flight readiness are three different milestones."
+        ],
+        keyTakeaway: "Laser crosslinks can move data between spacecraft without waiting for each satellite to be in view of a ground station. Always distinguish link type and technology-readiness stage.",
+        references: [
+          { text: "Astrogate Labs: AstroLink Micro Laser Communication Solutions", url: "https://astrogatelabs.com/solutions" },
+          { text: "Kepler Communications: Next-Generation Optical Data-Relay Network Commercial Services", url: "https://kepler.space/" },
+          { text: "LatConnect 60: 10 Gbps Space-to-Ground Optical Terminal Contract", url: "https://latconnect60.com/" }
+        ]
+      },
+      {
+        kicker: "Communication Concepts • Laser Physics",
+        title: "How Satellites Talk Using Lasers: The Science of Optical Communication",
+        subtitle: "From encoded data to a precisely aimed beam of light travelling between spacecraft.",
+        figure: {
+          src: "article_tbird.jpg",
+          alt: "NASA TBIRD optical communication payload developed by MIT Lincoln Laboratory",
+          caption: "NASA TBIRD (TeraByte InfraRed Delivery) optical communications terminal developed by MIT Lincoln Laboratory, achieving record 200 Gbps space-to-ground optical data downlinks. Photograph credit: MIT Lincoln Laboratory."
+        },
+        paragraphs: [
+          "An optical communication system turns digital information into carefully controlled patterns of light. At the transmitting satellite, an electronic data stream is encoded and used to modulate a laser. A telescope shapes the outgoing light into a narrow beam aimed at the receiving spacecraft. At the other end, a telescope collects the light and a photodetector converts it into an electrical signal; the receiver's modem then reconstructs the data. Depending on the system, information can be carried through changes in pulse timing, intensity, or the phase of the optical signal.",
+          "The biggest engineering challenge is precise alignment. The beam is so narrow that the two terminals must perform pointing, acquisition, and tracking (PAT): aim toward the partner, find it (often with a beacon or scan), and keep tracking as the spacecraft move. Fine-steering mirrors and spacecraft attitude-control systems help maintain the link.",
+          "For a satellite-to-satellite link, the laser travels through the near-vacuum of space, so clouds do not block the path. A space-to-ground optical link must pass through the atmosphere: cloud moisture can strongly attenuate the beam, and turbulence can disturb it. Operators can improve availability by using geographically separated optical ground stations, routing data to a clear site, or maintaining an RF link as a fallback. NASA's Laser Communications Relay Demonstration describes this weather sensitivity and the value of multiple ground stations."
+        ],
+        keyTakeaway: "Optical links offer high data rates and narrow beams, but they are not automatically immune to interception, jamming, or system failure. Secure protocols, encryption, accurate tracking, and RF/ground-station redundancy remain important parts of a reliable communication network.",
+        references: [
+          { text: "MIT Lincoln Laboratory: TeraByte InfraRed Delivery (TBIRD)", url: "https://www.ll.mit.edu/partner-us/available-technologies/terabyte-infrared-delivery-tbird" },
+          { text: "NASA: 9.0 Communications, Small Spacecraft Systems Virtual Institute", url: "https://www.nasa.gov/smallsat-institute/" },
+          { text: "NASA: Laser Communications Relay Demonstration (LCRD) Overview", url: "https://www.nasa.gov/mission/lcrd/" }
+        ]
+      }
     ],
-    tags: ["Satellite Spotting", "Radio Waves", "ISS Passes", "Space Communication", "Earth & Sky"]
+    tags: ["Optical Crosslinks", "Laser Communication", "Astrogate AstroLink", "NASA TBIRD", "OISL", "Ground Stations"]
   }
 ];
 
