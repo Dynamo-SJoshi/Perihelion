@@ -1488,19 +1488,7 @@ window.addEventListener('keydown', (e) => {
   else if (e.key === 'Escape') closeEdition();
 });
 
-// Touch swipe support for mobile
-let touchStartX = 0;
-let touchEndX = 0;
 if ($('reader-overlay')) {
-  $('reader-overlay').addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, { passive: true });
-  $('reader-overlay').addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    if (touchStartX - touchEndX > 50) navReader(1); // Swipe left -> next
-    if (touchEndX - touchStartX > 50) navReader(-1); // Swipe right -> prev
-  }, { passive: true });
-  
   // Click backdrop outside frame to close
   $('reader-overlay').addEventListener('click', (e) => {
     if (e.target === $('reader-overlay')) closeEdition();
